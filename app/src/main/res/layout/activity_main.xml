@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.arpit.sportit.MainActivity">
 
-    <TextView
-        android:id="@+id/myEvents"
-        style="@style/CategoryStyle"
-        android:background="@color/category_myEvents"
-        android:text="@string/category_myEvents" />
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/viewAll"
-        style="@style/CategoryStyle"
-        android:background="@color/category_viewAll"
-        android:text="@string/category_viewAll" />
-
-    <TextView
-        android:id="@+id/attending"
-        style="@style/CategoryStyle"
-        android:background="@color/category_attending"
-        android:text="@string/category_attending" />
-
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

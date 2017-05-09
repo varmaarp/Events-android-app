@@ -13,19 +13,9 @@ public class MyEvents extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.events_list);
-
-        final ArrayList<Event> events = new ArrayList<Event>();
-
-        events.add(new Event("Football Match", "Uni Ground1", "10 May 2017", "09:30 AM"));
-        events.add(new Event("Football Match2", "Uni Ground1", "10 May 2017", "09:30 AM"));
-        events.add(new Event("Football Match3", "Uni Ground1", "10 May 2017", "09:30 AM"));
-        events.add(new Event("Football Match4", "Uni Ground1", "10 May 2017", "09:30 AM"));
-
-        EventAdaptor adaptor = new EventAdaptor(this, events);
-
-        ListView listView = (ListView) findViewById(R.id.list);
-        listView.setAdapter(adaptor);
-
+        setContentView(R.layout.activity_category);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new MyEventsFragment())
+                .commit();
     }
 }
