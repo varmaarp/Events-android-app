@@ -13,7 +13,7 @@ public class MyEvents extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_events);
+        setContentView(R.layout.events_list);
 
         final ArrayList<Event> events = new ArrayList<Event>();
 
