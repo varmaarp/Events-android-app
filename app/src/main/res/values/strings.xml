@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">SportIt</string>
+    <string name="app_name">Sport It</string>
+
+    <!--Category name for myEvents -->
+    <string name="category_myEvents">My Events</string>
+
+    <!--Category name for View All Events -->
+    <string name="category_viewAll">View All Events</string>
+
+    <!--Category name for Attending -->
+    <string name="category_attending">Attending</string>
+
 </resources>
