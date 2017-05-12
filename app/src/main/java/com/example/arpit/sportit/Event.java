@@ -6,6 +6,8 @@ package com.example.arpit.sportit;
 
 public class Event {
 
+    public Event(){}
+
     public Event(String eventName, String place, String date, String time){
         this.eventName = eventName;
         this.place = place;
@@ -21,15 +23,17 @@ public class Event {
 
     private String time;
 
-    private String createdBy;
+    //private String createdBy;
 
     public String getEventName(){
         return eventName;
     }
 
+    /**
     public String getCreatedBy() {
         return createdBy;
     }
+     **/
 
     public String getDate() {
         return date;

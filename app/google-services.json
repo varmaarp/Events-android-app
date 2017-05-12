@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "323801108459",
+    "firebase_url": "https://eventsapp-f8434.firebaseio.com",
+    "project_id": "eventsapp-f8434",
+    "storage_bucket": "eventsapp-f8434.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323801108459:android:8bd8ee50cd79230b",
+        "android_client_info": {
+          "package_name": "com.example.arpit.sportit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "323801108459-9go0cngsjj0dbtl8lmqk9dm77h0s96si.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.arpit.sportit",
+            "certificate_hash": "3ca846b2e25cf6981b551fe03958f79efa85ac01"
+          }
+        },
+        {
+          "client_id": "323801108459-tlqs8vaopc059ib43lh8t41ndm31l7fj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB_TpqEi-0s4Drxg_KGVPkiz8PmC7fJx8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "323801108459-tlqs8vaopc059ib43lh8t41ndm31l7fj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

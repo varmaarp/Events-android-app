@@ -10,5 +10,23 @@
     <!--Category name for Attending -->
     <string name="category_attending">Attending</string>
 
+    <!--Category name for Create Event -->
+    <string name="category_createEvent">Create Event</string>
+
+    <!--Label for Create Event -->
+    <string name="label_eventName">Event Name</string>
+
+    <!--Label for Date -->
+    <string name="label_eventDate">Date</string>
+
+    <!--Label for Time -->
+    <string name="label_eventTime">Time</string>
+
+    <!--Label for Placee -->
+    <string name="label_eventPlace">Place</string>
+
+    <!-- Label for editor menu option to save event and leave editor -->
+    <string name="action_save">Save</string>
+
 
 </resources>

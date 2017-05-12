@@ -36,10 +36,10 @@ public class AttendingFragment extends Fragment {
         events.add(new Event("Football Match", "Uni Ground1", "10 May 2017", "09:30 AM"));
         events.add(new Event("Football Match2", "Uni Ground1", "10 May 2017", "09:30 AM"));
 
-        EventAdaptor adaptor = new EventAdaptor(getActivity(), events);
+        EventAdaptor attendingEventsAdaptor = new EventAdaptor(getActivity(), events);
 
         ListView listView = (ListView) rootView.findViewById(R.id.list);
-        listView.setAdapter(adaptor);
+        listView.setAdapter(attendingEventsAdaptor);
 
         return rootView;
 

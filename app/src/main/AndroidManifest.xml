@@ -12,15 +12,21 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MyEvents"
-            android:label="@string/category_myEvents"/>
-        <activity android:name=".ViewAll"
-            android:label="@string/category_viewAll"/>
-        <activity android:name=".Attending"
-            android:label="@string/category_attending"/>
+        <activity
+            android:name=".MyEvents"
+            android:label="@string/category_myEvents" />
+        <activity
+            android:name=".ViewAll"
+            android:label="@string/category_viewAll" />
+        <activity
+            android:name=".Attending"
+            android:label="@string/category_attending" />
+        <activity android:name=".EventEditorActivity"
+            android:label="@string/category_createEvent" />
     </application>
 
 </manifest>

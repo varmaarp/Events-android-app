@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:orientation="vertical"
+    tools:context=".EventEditorActivity">
+
+
+    <!-- Event Name -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label Event Name-->
+        <TextView
+            android:text="@string/label_eventName"
+            style="@style/EditorLabelStyle" />
+
+        <!-- Event Name field -->
+        <EditText
+            android:id="@+id/edit_event_name"
+            android:hint="@string/label_eventName"
+            android:inputType="textCapWords"
+            style="@style/EditorFieldStyle" />
+    </LinearLayout>
+
+    <!-- Event Date -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label Event Name-->
+        <TextView
+            android:text="@string/label_eventDate"
+            style="@style/EditorLabelStyle" />
+
+        <!-- Event Name field -->
+        <EditText
+            android:id="@+id/edit_event_date"
+            android:hint="@string/label_eventDate"
+            android:inputType="textCapWords"
+            style="@style/EditorFieldStyle" />
+    </LinearLayout>
+
+    <!-- Event Time -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label Event Time-->
+        <TextView
+            android:text="@string/label_eventTime"
+            style="@style/EditorLabelStyle" />
+
+        <!-- Event Name field -->
+        <EditText
+            android:id="@+id/edit_event_time"
+            android:hint="@string/label_eventTime"
+            android:inputType="textCapWords"
+            style="@style/EditorFieldStyle" />
+    </LinearLayout>
+
+    <!-- Event Place -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label Event Place-->
+        <TextView
+            android:text="@string/label_eventPlace"
+            style="@style/EditorLabelStyle" />
+
+        <!-- Event Place field -->
+        <EditText
+            android:id="@+id/edit_event_place"
+            android:hint="@string/label_eventPlace"
+            android:inputType="textCapWords"
+            style="@style/EditorFieldStyle" />
+    </LinearLayout>
+
+</LinearLayout>

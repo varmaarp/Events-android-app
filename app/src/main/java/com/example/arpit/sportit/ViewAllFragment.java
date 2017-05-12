@@ -42,10 +42,10 @@ public class ViewAllFragment extends Fragment {
         events.add(new Event("Football Match3", "Uni Ground1", "10 May 2017", "09:30 AM"));
         events.add(new Event("Football Match4", "Uni Ground1", "10 May 2017", "09:30 AM"));
 
-        EventAdaptor adaptor = new EventAdaptor(getActivity(), events);
+        EventAdaptor viewAllEventsAdaptor = new EventAdaptor(getActivity(), events);
 
         ListView listView = (ListView) rootView.findViewById(R.id.list);
-        listView.setAdapter(adaptor);
+        listView.setAdapter(viewAllEventsAdaptor);
 
         return rootView;
     }
