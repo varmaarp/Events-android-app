@@ -1,4 +1,4 @@
-package com.example.arpit.sportit;
+package com.example.arpit.sportit.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+
+import com.example.arpit.sportit.DataClasses.Event;
+import com.example.arpit.sportit.R;
 
 import java.util.ArrayList;
 

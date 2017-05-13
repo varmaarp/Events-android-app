@@ -1,4 +1,4 @@
-package com.example.arpit.sportit;
+package com.example.arpit.sportit.DataClasses;
 
 /**
  * Created by Arpit on 09-05-2017.

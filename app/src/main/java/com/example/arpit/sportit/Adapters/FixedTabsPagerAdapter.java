@@ -1,9 +1,14 @@
-package com.example.arpit.sportit;
+package com.example.arpit.sportit.Adapters;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.example.arpit.sportit.Fragments.AttendingFragment;
+import com.example.arpit.sportit.Fragments.MyEventsFragment;
+import com.example.arpit.sportit.Fragments.ViewAllFragment;
+import com.example.arpit.sportit.R;
 
 /**
  * Created by Arpit on 10-05-2017.

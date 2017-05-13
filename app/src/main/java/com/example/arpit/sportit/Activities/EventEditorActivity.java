@@ -1,10 +1,12 @@
-package com.example.arpit.sportit;
+package com.example.arpit.sportit.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.arpit.sportit.DataClasses.Event;
+import com.example.arpit.sportit.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 

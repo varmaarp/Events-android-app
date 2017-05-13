@@ -1,21 +1,22 @@
-package com.example.arpit.sportit;
+package com.example.arpit.sportit.Activities;
 
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ListView;
 
-import java.util.ArrayList;
+import com.example.arpit.sportit.Fragments.AttendingFragment;
+import com.example.arpit.sportit.R;
 
-public class ViewAll extends AppCompatActivity {
+public class Attending extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, new ViewAllFragment())
+                .replace(R.id.container, new AttendingFragment())
                 .commit();
+
+
+
     }
 }

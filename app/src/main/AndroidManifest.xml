@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,15 +17,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MyEvents"
+            android:name=".Activities.MyEvents"
             android:label="@string/category_myEvents" />
         <activity
-            android:name=".ViewAll"
+            android:name=".Activities.ViewAll"
             android:label="@string/category_viewAll" />
         <activity
-            android:name=".Attending"
+            android:name=".Activities.Attending"
             android:label="@string/category_attending" />
-        <activity android:name=".EventEditorActivity"
+        <activity android:name=".Activities.EventEditorActivity"
             android:label="@string/category_createEvent" />
     </application>
 

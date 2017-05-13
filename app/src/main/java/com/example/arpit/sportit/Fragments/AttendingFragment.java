@@ -1,7 +1,6 @@
-package com.example.arpit.sportit;
+package com.example.arpit.sportit.Fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -11,29 +10,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.example.arpit.sportit.DataClasses.Event;
+import com.example.arpit.sportit.Adapters.EventAdaptor;
+import com.example.arpit.sportit.R;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-
-import static com.example.arpit.sportit.R.id.container;
-import static com.google.android.gms.internal.zzt.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyEventsFragment extends Fragment {
-
+public class AttendingFragment extends Fragment {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
-    private ChildEventListener childEventListener;
     private EventAdaptor myEventsAdaptor;
+    private ChildEventListener childEventListener;
 
-    public MyEventsFragment() {
+    public AttendingFragment() {
         // Required empty public constructor
     }
 
@@ -43,23 +43,43 @@ public class MyEventsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.events_list,container,false);
 
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
+
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("events");
 
         final ArrayList<Event> events = new ArrayList<Event>();
+
         myEventsAdaptor = new EventAdaptor(getActivity(), events);
 
         ListView listView = (ListView) rootView.findViewById(R.id.list);
         listView.setAdapter(myEventsAdaptor);
 
+        databaseReference = firebaseDatabase.getReference().child("users").child("-Kjxy4VEdiAQ5UbpeCNT").child("eventsAttending");
+
+        final DatabaseReference eventsReference = firebaseDatabase.getReference().child("events");
+
         childEventListener = new ChildEventListener() {
+
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                Event e = dataSnapshot.getValue(Event.class);
-                events.add(e);
+                eventsReference.child("-"+dataSnapshot.getKey()).addValueEventListener(new ValueEventListener() {
 
-                myEventsAdaptor.notifyDataSetChanged();
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.v("method", "in onChildAdded");
+                        Event e = dataSnapshot.getValue(Event.class);
+                        events.add(e);
+                        myEventsAdaptor.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        System.out.println("The read failed: " + databaseError.getCode());
+                    }
+                });
+
             }
 
             @Override
@@ -81,26 +101,21 @@ public class MyEventsFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
+
         };
 
         databaseReference.addChildEventListener(childEventListener);
 
-
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(),EventEditorActivity.class);
-                startActivity(intent);
-            }
-        });
-
         return rootView;
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         myEventsAdaptor.clear();
+        databaseReference.removeEventListener(childEventListener);
     }
+
+
 }
