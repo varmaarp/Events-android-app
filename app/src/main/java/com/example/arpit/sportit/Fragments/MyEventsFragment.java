@@ -1,14 +1,18 @@
 package com.example.arpit.sportit.Fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.arpit.sportit.Activities.EventEditorActivity;
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.Adapters.EventAdaptor;
 import com.example.arpit.sportit.R;
@@ -39,12 +43,14 @@ public class MyEventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.events_list,container,false);
+        final View rootView = inflater.inflate(R.layout.events_list,container,false);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         final ArrayList<Event> events = new ArrayList<Event>();
         myEventsAdaptor = new EventAdaptor(getActivity(), events);
+
+        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
 
         ListView listView = (ListView) rootView.findViewById(R.id.list);
         listView.setAdapter(myEventsAdaptor);
@@ -52,13 +58,21 @@ public class MyEventsFragment extends Fragment {
 
         databaseReference = firebaseDatabase.getReference().child("events");
 
+
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                long val = 0;
+                long count = dataSnapshot.getChildrenCount();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Event e = postSnapshot.getValue(Event.class);
+                    e.setEventID(postSnapshot.getKey());
                     events.add(e);
+                    val++;
                     myEventsAdaptor.notifyDataSetChanged();
+                }
+                if (val == count){
+                    loadingIndicator.setVisibility(View.GONE);
                 }
             }
 
@@ -69,6 +83,27 @@ public class MyEventsFragment extends Fragment {
         };
 
         databaseReference.orderByChild("createdBy").equalTo("Kjxy4VEdiAQ5UbpeCNT").addValueEventListener(valueEventListener);
+
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(),EventEditorActivity.class);
+                intent.putExtra("Caller Method","event add");
+                startActivity(intent);
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Event e = events.get(position);
+                Intent intent = new Intent(getContext(), EventEditorActivity.class);
+                intent.putExtra("EventID",e.getEventID());
+                intent.putExtra("Caller Method","event details");
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }

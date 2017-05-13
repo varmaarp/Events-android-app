@@ -1,6 +1,7 @@
 package com.example.arpit.sportit.Fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -8,8 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.arpit.sportit.Activities.EventEditorActivity;
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.Adapters.EventAdaptor;
 import com.example.arpit.sportit.R;
@@ -52,6 +55,8 @@ public class AttendingFragment extends Fragment {
 
         myEventsAdaptor = new EventAdaptor(getActivity(), events);
 
+        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+
         ListView listView = (ListView) rootView.findViewById(R.id.list);
         listView.setAdapter(myEventsAdaptor);
 
@@ -68,8 +73,8 @@ public class AttendingFragment extends Fragment {
 
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.v("method", "in onChildAdded");
                         Event e = dataSnapshot.getValue(Event.class);
+                        e.setEventID(dataSnapshot.getKey());
                         events.add(e);
                         myEventsAdaptor.notifyDataSetChanged();
                     }
@@ -79,7 +84,7 @@ public class AttendingFragment extends Fragment {
                         System.out.println("The read failed: " + databaseError.getCode());
                     }
                 });
-
+                loadingIndicator.setVisibility(View.GONE);
             }
 
             @Override
@@ -105,6 +110,17 @@ public class AttendingFragment extends Fragment {
         };
 
         databaseReference.addChildEventListener(childEventListener);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Event e = events.get(position);
+                Intent intent = new Intent(getContext(), EventEditorActivity.class);
+                intent.putExtra("EventID",e.getEventID());
+                intent.putExtra("Caller Method","event details attending");
+                startActivity(intent);
+            }
+        });
 
         return rootView;
 

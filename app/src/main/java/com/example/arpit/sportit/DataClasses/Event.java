@@ -23,17 +23,18 @@ public class Event {
 
     private String time;
 
-    //private String createdBy;
+    private String eventID;
+
+    private String createdBy;
 
     public String getEventName(){
         return eventName;
     }
 
-    /**
+
     public String getCreatedBy() {
         return createdBy;
     }
-     **/
 
     public String getDate() {
         return date;
@@ -45,5 +46,13 @@ public class Event {
 
     public String getTime() {
         return time;
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
     }
 }

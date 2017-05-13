@@ -24,6 +24,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">2</item>
         <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">#051403</item>
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
     </style>
 

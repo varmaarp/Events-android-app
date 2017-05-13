@@ -26,7 +26,7 @@
             android:name=".Activities.Attending"
             android:label="@string/category_attending" />
         <activity android:name=".Activities.EventEditorActivity"
-            android:label="@string/category_createEvent" />
+            android:label="@string/category_createEvent"/>
     </application>
 
 </manifest>

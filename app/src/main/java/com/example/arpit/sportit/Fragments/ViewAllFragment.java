@@ -103,7 +103,6 @@ public class ViewAllFragment extends Fragment {
             }
         });
 
-
         return rootView;
     }
 

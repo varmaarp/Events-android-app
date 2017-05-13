@@ -4,12 +4,4 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <!-- Background color for myEvents category -->
-    <color name="category_myEvents">#F0514B</color>
-
-    <!-- Background color for viewAll category -->
-    <color name="category_viewAll">#FD8E09</color>
-
-    <!-- Background color for attending category -->
-    <color name="category_attending">#379237</color>
 </resources>
