@@ -7,20 +7,20 @@ package com.example.arpit.sportit.DataClasses;
 public class User {
 
     private String userName;
-    private String userID;
+    private String userEmail;
 
     public User(){}
 
-    public User(String userID, String userName){
-        this.userID = userID;
+    public User(String userName, String userEmail){
         this.userName = userName;
+        this.userEmail = userEmail;
     }
 
     public String getUserName(){
         return userName;
     }
 
-    public String getUserID(){
-        return userID;
+    public String getUserEmail(){
+        return userEmail;
     }
 }

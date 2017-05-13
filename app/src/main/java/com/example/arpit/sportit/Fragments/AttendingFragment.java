@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.arpit.sportit.Activities.EventEditorActivity;
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.Adapters.EventAdaptor;
 import com.example.arpit.sportit.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,6 +37,9 @@ public class AttendingFragment extends Fragment {
     private DatabaseReference databaseReference;
     private EventAdaptor myEventsAdaptor;
     private ChildEventListener childEventListener;
+    private FirebaseAuth firebaseAuth;
+    private TextView emptyStateTextView;
+    private ValueEventListener valueEventListener;
 
     public AttendingFragment() {
         // Required empty public constructor
@@ -49,7 +54,10 @@ public class AttendingFragment extends Fragment {
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
 
+        emptyStateTextView = (TextView) rootView.findViewById(R.id.empty_view);
+
         firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         final ArrayList<Event> events = new ArrayList<Event>();
 
@@ -58,33 +66,65 @@ public class AttendingFragment extends Fragment {
         final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
 
         ListView listView = (ListView) rootView.findViewById(R.id.list);
+        listView.setEmptyView(emptyStateTextView);
         listView.setAdapter(myEventsAdaptor);
 
-        databaseReference = firebaseDatabase.getReference().child("users").child("-Kjxy4VEdiAQ5UbpeCNT").child("eventsAttending");
+        Log.v("user id", "user : " + firebaseAuth.getCurrentUser().getUid());
+        databaseReference = firebaseDatabase.getReference().child("users").child(firebaseAuth.getCurrentUser().getUid()).child("eventsAttending");
 
         final DatabaseReference eventsReference = firebaseDatabase.getReference().child("events");
 
+        valueEventListener = new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.v("message", "in value listener");
+
+                if (dataSnapshot.hasChildren()){
+                    Log.v("message", "children exists");
+                }
+                else{
+                    Log.v("message", "children does not exists");
+                    loadingIndicator.setVisibility(View.GONE);
+                    emptyStateTextView.setText("No Events joined");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        /*
         childEventListener = new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                eventsReference.child("-"+dataSnapshot.getKey()).addValueEventListener(new ValueEventListener() {
+                Log.v("data key", "key : in data snapshot");
 
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Event e = dataSnapshot.getValue(Event.class);
-                        e.setEventID(dataSnapshot.getKey());
-                        events.add(e);
-                        myEventsAdaptor.notifyDataSetChanged();
-                    }
+                if (dataSnapshot.getValue() == null ) {
+                    loadingIndicator.setVisibility(View.GONE);
+                    emptyStateTextView.setText("No Events joined");
+                } else {
+                    eventsReference.child("-" + dataSnapshot.getKey()).addValueEventListener(new ValueEventListener() {
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        System.out.println("The read failed: " + databaseError.getCode());
-                    }
-                });
-                loadingIndicator.setVisibility(View.GONE);
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Event e = dataSnapshot.getValue(Event.class);
+                            e.setEventID(dataSnapshot.getKey());
+                            events.add(e);
+                            myEventsAdaptor.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            System.out.println("The read failed: " + databaseError.getCode());
+                        }
+                    });
+                    loadingIndicator.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -108,8 +148,10 @@ public class AttendingFragment extends Fragment {
             }
 
         };
+        */
 
-        databaseReference.addChildEventListener(childEventListener);
+        //databaseReference.addChildEventListener(childEventListener);
+        databaseReference.addValueEventListener(valueEventListener);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -130,7 +172,7 @@ public class AttendingFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         myEventsAdaptor.clear();
-        databaseReference.removeEventListener(childEventListener);
+        databaseReference.removeEventListener(valueEventListener);
     }
 
 
