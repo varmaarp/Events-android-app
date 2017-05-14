@@ -1,16 +1,24 @@
 package com.example.arpit.sportit.Fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.example.arpit.sportit.Activities.EventEditorActivity;
+import com.example.arpit.sportit.Adapters.EventAdaptor;
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.R;
 import com.example.arpit.sportit.Adapters.RecyclerAdapter;
@@ -20,8 +28,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.example.arpit.sportit.R.id.fab;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,8 +48,12 @@ public class ViewAllFragment extends Fragment {
     private RecyclerAdapter recyclerAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseReferenceEvents;
+    private DatabaseReference databaseReferenceUsers;
     private ChildEventListener childEventListener;
+    private EventAdaptor myEventsAdaptor;
+    private ValueEventListener valueEventListener;
+    private ValueEventListener valueEventListener2;
 
 
     public ViewAllFragment() {
@@ -45,44 +65,67 @@ public class ViewAllFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.content_main,container,false);
-
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        View rootView = inflater.inflate(R.layout.events_list,container,false);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("events");
+        databaseReferenceEvents  = firebaseDatabase.getReference().child("events");
+        databaseReferenceUsers = firebaseDatabase.getReference().child("users").child("otg6kfHTjgVKJ09iZgPdbx3roAM2").child("eventsAttending");
+
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
+
+        final TextView emptyStateTextView = (TextView) rootView.findViewById(R.id.empty_view);
+
+        final ArrayList<String> eventIds = new ArrayList<>();
 
         final ArrayList<Event> events = new ArrayList<Event>();
-        recyclerAdapter = new RecyclerAdapter(events);
+        myEventsAdaptor = new EventAdaptor(getActivity(), events);
 
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
+        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
 
-        recyclerView.setAdapter(recyclerAdapter);
+        ListView listView = (ListView) rootView.findViewById(R.id.list);
+        listView.setAdapter(myEventsAdaptor);
 
-        childEventListener = new ChildEventListener() {
+        valueEventListener2 = new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                eventIds.clear();
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                    Log.v("event id", "ids from users : "+postSnapshot.getKey());
+                    eventIds.add(postSnapshot.getKey());
+                }
 
-                Event e = dataSnapshot.getValue(Event.class);
-                events.add(e);
-
-                recyclerAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                databaseReferenceEvents.addValueEventListener(valueEventListener);
 
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        };
+
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myEventsAdaptor.clear();
+
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Event e = postSnapshot.getValue(Event.class);
+                    if (!e.getCreatedBy().contentEquals("otg6kfHTjgVKJ09iZgPdbx3roAM2") &&
+                            !eventIds.contains(postSnapshot.getKey())) {
+                        e.setEventID(postSnapshot.getKey());
+                        events.add(e);
+                        myEventsAdaptor.notifyDataSetChanged();
+                        loadingIndicator.setVisibility(View.GONE);
+                    }
+                }
+
+                if (myEventsAdaptor.isEmpty()){
+                    loadingIndicator.setVisibility(View.GONE);
+                    emptyStateTextView.setText("No Events Available");
+                }
 
             }
 
@@ -92,18 +135,30 @@ public class ViewAllFragment extends Fragment {
             }
         };
 
-        databaseReference.addChildEventListener(childEventListener);
+        databaseReferenceUsers.addValueEventListener(valueEventListener2);
 
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                databaseReference = firebaseDatabase.getReference().child("users");
-                databaseReference.push().setValue(new User("Uid 1", "ABC"));
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Event e = events.get(position);
+                Intent intent = new Intent(getContext(), EventEditorActivity.class);
+                intent.putExtra("EventID",e.getEventID());
+                intent.putExtra("Caller Method","view all events");
+                startActivity(intent);
             }
         });
 
         return rootView;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        myEventsAdaptor.clear();
+        databaseReferenceEvents.removeEventListener(valueEventListener);
+    }
+
 
 }

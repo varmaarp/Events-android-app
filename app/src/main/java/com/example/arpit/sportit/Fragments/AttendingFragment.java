@@ -38,7 +38,6 @@ public class AttendingFragment extends Fragment {
     private EventAdaptor myEventsAdaptor;
     private ChildEventListener childEventListener;
     private FirebaseAuth firebaseAuth;
-    private TextView emptyStateTextView;
     private ValueEventListener valueEventListener;
 
     public AttendingFragment() {
@@ -54,7 +53,7 @@ public class AttendingFragment extends Fragment {
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
 
-        emptyStateTextView = (TextView) rootView.findViewById(R.id.empty_view);
+        final TextView emptyStateTextView = (TextView) rootView.findViewById(R.id.empty_view);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -69,8 +68,9 @@ public class AttendingFragment extends Fragment {
         listView.setEmptyView(emptyStateTextView);
         listView.setAdapter(myEventsAdaptor);
 
-        Log.v("user id", "user : " + firebaseAuth.getCurrentUser().getUid());
-        databaseReference = firebaseDatabase.getReference().child("users").child(firebaseAuth.getCurrentUser().getUid()).child("eventsAttending");
+        //Log.v("user id", "user : " + firebaseAuth.getCurrentUser().getUid());
+        //databaseReference = firebaseDatabase.getReference().child("users").child(firebaseAuth.getCurrentUser().getUid()).child("eventsAttending");
+        databaseReference = firebaseDatabase.getReference().child("users").child("otg6kfHTjgVKJ09iZgPdbx3roAM2").child("eventsAttending");
 
         final DatabaseReference eventsReference = firebaseDatabase.getReference().child("events");
 
@@ -78,10 +78,29 @@ public class AttendingFragment extends Fragment {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v("message", "in value listener");
-
+                myEventsAdaptor.clear();
                 if (dataSnapshot.hasChildren()){
-                    Log.v("message", "children exists");
+
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+
+                        eventsReference.child(postSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Log.v("inner value", "inner value : " + dataSnapshot.getKey());
+                                Event e = dataSnapshot.getValue(Event.class);
+                                e.setEventID(dataSnapshot.getKey());
+                                events.add(e);
+                                myEventsAdaptor.notifyDataSetChanged();
+                                loadingIndicator.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
                 else{
                     Log.v("message", "children does not exists");

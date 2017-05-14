@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*
         firebaseAuth = FirebaseAuth.getInstance();
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                     onSignedIn(user.getUid(),user.getDisplayName(),user.getEmail());
                 }else{
                     //user is signed out
+
                     startActivityForResult(
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
@@ -58,11 +60,30 @@ public class MainActivity extends AppCompatActivity {
                                             new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
                                     .build(),
                             RC_SIGN_IN);
+
                 }
             }
         };
+        */
+
+        // Find the view pager that will allow the user to swipe between fragments
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+
+        // Create an adapter that knows which fragment should be shown on each page
+        FixedTabsPagerAdapter adapter = new FixedTabsPagerAdapter(this,getSupportFragmentManager());
+
+        // Set the adapter onto the view pager
+        viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(1);
+
+        // Find the tab layout that shows the tabs
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+
     }
 
+    /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -75,17 +96,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    */
 
     @Override
     protected void onResume() {
         super.onResume();
-        firebaseAuth.addAuthStateListener(authStateListener);
+        //firebaseAuth.addAuthStateListener(authStateListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        firebaseAuth.removeAuthStateListener(authStateListener);
+        //firebaseAuth.removeAuthStateListener(authStateListener);
     }
 
     private void onSignedIn(final String userId, final String userName, final String userEmail){
@@ -101,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else{
                     Log.v("user exists", "user not present");
-                    //Map<String, User> user = new HashMap<String, User>();
                     User user =  new User(userName, userEmail);
                     databaseReference.child(userId).setValue(user);
                 }

@@ -1,5 +1,7 @@
 package com.example.arpit.sportit.DataClasses;
 
+import org.json.JSONObject;
+
 /**
  * Created by Arpit on 09-05-2017.
  */
@@ -8,11 +10,12 @@ public class Event {
 
     public Event(){}
 
-    public Event(String eventName, String place, String date, String time){
+    public Event(String eventName, String place, String date, String time, String createdBy){
         this.eventName = eventName;
         this.place = place;
         this.date = date;
         this.time = time;
+        this.createdBy = createdBy;
     };
 
     private String eventName;
@@ -27,10 +30,11 @@ public class Event {
 
     private String createdBy;
 
+    //private JSONObject usersAttending;
+
     public String getEventName(){
         return eventName;
     }
-
 
     public String getCreatedBy() {
         return createdBy;
@@ -55,4 +59,6 @@ public class Event {
     public void setEventID(String eventID) {
         this.eventID = eventID;
     }
+
+    //public JSONObject getUsersAttending(){return usersAttending;}
 }

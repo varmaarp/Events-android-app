@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.arpit.sportit.Activities.EventEditorActivity;
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.Adapters.EventAdaptor;
 import com.example.arpit.sportit.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 public class MyEventsFragment extends Fragment {
 
     private FirebaseDatabase firebaseDatabase;
+    private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
     private EventAdaptor myEventsAdaptor;
     private ValueEventListener valueEventListener;
@@ -46,9 +49,12 @@ public class MyEventsFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.events_list,container,false);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         final ArrayList<Event> events = new ArrayList<Event>();
         myEventsAdaptor = new EventAdaptor(getActivity(), events);
+
+        final TextView emptyStateTextView = (TextView) rootView.findViewById(R.id.empty_view);
 
         final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
 
@@ -62,17 +68,18 @@ public class MyEventsFragment extends Fragment {
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                long val = 0;
-                long count = dataSnapshot.getChildrenCount();
+                myEventsAdaptor.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Event e = postSnapshot.getValue(Event.class);
                     e.setEventID(postSnapshot.getKey());
                     events.add(e);
-                    val++;
                     myEventsAdaptor.notifyDataSetChanged();
-                }
-                if (val == count){
+
                     loadingIndicator.setVisibility(View.GONE);
+                }
+                if (myEventsAdaptor.isEmpty()){
+                    loadingIndicator.setVisibility(View.GONE);
+                    emptyStateTextView.setText("No Events Available. Create an Event");
                 }
             }
 
@@ -82,7 +89,8 @@ public class MyEventsFragment extends Fragment {
             }
         };
 
-        databaseReference.orderByChild("createdBy").equalTo("Kjxy4VEdiAQ5UbpeCNT").addValueEventListener(valueEventListener);
+        databaseReference.orderByChild("createdBy").equalTo("otg6kfHTjgVKJ09iZgPdbx3roAM2").addValueEventListener(valueEventListener);
+        //databaseReference.orderByChild("createdBy").equalTo(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(valueEventListener);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

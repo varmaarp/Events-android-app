@@ -1,6 +1,7 @@
 package com.example.arpit.sportit.Activities;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,16 +13,25 @@ import android.widget.EditText;
 
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+
 public class EventEditorActivity extends AppCompatActivity {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private FirebaseAuth firebaseAuth;
     private EditText eventNameEditText;
     private EditText eventDateEditText;
     private EditText eventTimeEditText;
@@ -35,7 +45,8 @@ public class EventEditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_editor);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("events");
+        //firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = firebaseDatabase.getReference();
 
         eventNameEditText = (EditText) findViewById(R.id.edit_event_name);
         eventDateEditText = (EditText) findViewById(R.id.edit_event_date);
@@ -66,9 +77,15 @@ public class EventEditorActivity extends AppCompatActivity {
             button2.setVisibility(View.VISIBLE);
             button1.setVisibility(View.VISIBLE);
         }
+        else if (previousActivity.contentEquals("view all events")){
+            setTitle("Event Details");
+            button1.setText("Join");
+            button2.setVisibility(View.VISIBLE);
+            button1.setVisibility(View.VISIBLE);
+        }
 
         if (eventID != null){
-            databaseReference.child(eventID).addListenerForSingleValueEvent(new ValueEventListener() {
+            databaseReference.child("events").child(eventID).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Event e = dataSnapshot.getValue(Event.class);
@@ -88,6 +105,22 @@ public class EventEditorActivity extends AppCompatActivity {
                 }
             });
         }
+
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((previousActivity.contentEquals("view all events"))){
+                    joinEvent();
+                }
+                else if (previousActivity.contentEquals("event add")){
+                    saveEventData();
+                }
+                else if (previousActivity.contentEquals("event details attending")){
+                    leaveEvent();
+                }
+                finish();
+            }
+        });
     }
 
     @Override
@@ -112,13 +145,36 @@ public class EventEditorActivity extends AppCompatActivity {
     }
 
     public void saveEventData(){
-        String eventName = eventNameEditText.getText().toString().trim();
-        String eventDate = eventDateEditText.getText().toString().trim();
-        String eventPlace = eventPlaceEditText.getText().toString().trim();
-        String eventTime = eventTimeEditText.getText().toString().trim();
+        //String userID = firebaseAuth.getCurrentUser().getUid();
+        String userID = "otg6kfHTjgVKJ09iZgPdbx3roAM2";
+        if (!userID.isEmpty()) {
+            String eventName = eventNameEditText.getText().toString().trim();
+            String eventDate = eventDateEditText.getText().toString().trim();
+            String eventPlace = eventPlaceEditText.getText().toString().trim();
+            String eventTime = eventTimeEditText.getText().toString().trim();
 
-        Event event = new Event(eventName,eventPlace,eventDate,eventTime);
+            Event event = new Event(eventName, eventPlace, eventDate, eventTime,userID);
 
-        databaseReference.push().setValue(event);
+            databaseReference.child("events").push().setValue(event);
+        }
+        else{
+            Log.v("Event entry", "user id not present");
+        }
     }
+
+    public void joinEvent(){
+
+        Map<String,Object> update = new HashMap<>();
+        update.put("events/"+eventID+"/usersAttending/"+"otg6kfHTjgVKJ09iZgPdbx3roAM2",true);
+        update.put("users/"+"otg6kfHTjgVKJ09iZgPdbx3roAM2"+"/eventsAttending/"+eventID,true);
+
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference();
+        dbref.updateChildren(update);
+    }
+
+    public void leaveEvent(){
+        databaseReference.child("events").child(eventID).child("usersAttending").child("otg6kfHTjgVKJ09iZgPdbx3roAM2").removeValue();
+        databaseReference.child("users").child("otg6kfHTjgVKJ09iZgPdbx3roAM2").child("eventsAttending").child(eventID).removeValue();
+    }
+
 }
