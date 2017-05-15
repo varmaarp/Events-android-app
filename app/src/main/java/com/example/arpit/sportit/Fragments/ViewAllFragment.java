@@ -69,7 +69,7 @@ public class ViewAllFragment extends Fragment {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReferenceEvents  = firebaseDatabase.getReference().child("events");
-        databaseReferenceUsers = firebaseDatabase.getReference().child("users").child("otg6kfHTjgVKJ09iZgPdbx3roAM2").child("eventsAttending");
+        databaseReferenceUsers = firebaseDatabase.getReference().child("users").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").child("eventsAttending");
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
@@ -110,22 +110,23 @@ public class ViewAllFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 myEventsAdaptor.clear();
-
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Event e = postSnapshot.getValue(Event.class);
-                    if (!e.getCreatedBy().contentEquals("otg6kfHTjgVKJ09iZgPdbx3roAM2") &&
+                    if (!e.getCreatedBy().contentEquals("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2") &&
                             !eventIds.contains(postSnapshot.getKey())) {
-                        e.setEventID(postSnapshot.getKey());
-                        events.add(e);
-                        myEventsAdaptor.notifyDataSetChanged();
-                        loadingIndicator.setVisibility(View.GONE);
+                            e.setEventID(postSnapshot.getKey());
+                            events.add(e);
+                            myEventsAdaptor.notifyDataSetChanged();
+                            loadingIndicator.setVisibility(View.GONE);
+                            emptyStateTextView.setVisibility(View.GONE);
                     }
                 }
-
                 if (myEventsAdaptor.isEmpty()){
                     loadingIndicator.setVisibility(View.GONE);
                     emptyStateTextView.setText("No Events Available");
+                    emptyStateTextView.setVisibility(View.VISIBLE);
                 }
+
 
             }
 

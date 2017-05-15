@@ -70,7 +70,7 @@ public class AttendingFragment extends Fragment {
 
         //Log.v("user id", "user : " + firebaseAuth.getCurrentUser().getUid());
         //databaseReference = firebaseDatabase.getReference().child("users").child(firebaseAuth.getCurrentUser().getUid()).child("eventsAttending");
-        databaseReference = firebaseDatabase.getReference().child("users").child("otg6kfHTjgVKJ09iZgPdbx3roAM2").child("eventsAttending");
+        databaseReference = firebaseDatabase.getReference().child("users").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").child("eventsAttending");
 
         final DatabaseReference eventsReference = firebaseDatabase.getReference().child("events");
 
@@ -93,6 +93,7 @@ public class AttendingFragment extends Fragment {
                                 events.add(e);
                                 myEventsAdaptor.notifyDataSetChanged();
                                 loadingIndicator.setVisibility(View.GONE);
+                                emptyStateTextView.setVisibility(View.GONE);
                             }
 
                             @Override

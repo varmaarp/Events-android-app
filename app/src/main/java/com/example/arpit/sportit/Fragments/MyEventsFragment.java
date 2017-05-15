@@ -74,12 +74,13 @@ public class MyEventsFragment extends Fragment {
                     e.setEventID(postSnapshot.getKey());
                     events.add(e);
                     myEventsAdaptor.notifyDataSetChanged();
-
                     loadingIndicator.setVisibility(View.GONE);
+                    emptyStateTextView.setVisibility(View.GONE);
                 }
                 if (myEventsAdaptor.isEmpty()){
                     loadingIndicator.setVisibility(View.GONE);
                     emptyStateTextView.setText("No Events Available. Create an Event");
+                    emptyStateTextView.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -89,7 +90,7 @@ public class MyEventsFragment extends Fragment {
             }
         };
 
-        databaseReference.orderByChild("createdBy").equalTo("otg6kfHTjgVKJ09iZgPdbx3roAM2").addValueEventListener(valueEventListener);
+        databaseReference.orderByChild("createdBy").equalTo("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").addValueEventListener(valueEventListener);
         //databaseReference.orderByChild("createdBy").equalTo(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(valueEventListener);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);

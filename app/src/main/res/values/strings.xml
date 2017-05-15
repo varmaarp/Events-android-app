@@ -22,8 +22,14 @@
     <!--Label for Time -->
     <string name="label_eventTime">Time</string>
 
-    <!--Label for Placee -->
+    <!--Label for Place -->
     <string name="label_eventPlace">Place</string>
+
+    <!--Label for Players Required -->
+    <string name="label_playersRequired">Players Required</string>
+
+    <!--Label for Players Attending -->
+    <string name="label_playersAttending">Players Attending</string>
 
     <!-- Label for editor menu option to save event and leave editor -->
     <string name="action_save">Save</string>

@@ -10,12 +10,14 @@ public class Event {
 
     public Event(){}
 
-    public Event(String eventName, String place, String date, String time, String createdBy){
+    public Event(String eventName, String place, String date, String time, String createdBy, int playersRequired){
         this.eventName = eventName;
         this.place = place;
         this.date = date;
         this.time = time;
         this.createdBy = createdBy;
+        this.playersRequired = playersRequired;
+        this.playersAttending = 0;
     };
 
     private String eventName;
@@ -30,7 +32,9 @@ public class Event {
 
     private String createdBy;
 
-    //private JSONObject usersAttending;
+    private int playersRequired;
+
+    private int playersAttending;
 
     public String getEventName(){
         return eventName;
@@ -60,5 +64,12 @@ public class Event {
         this.eventID = eventID;
     }
 
-    //public JSONObject getUsersAttending(){return usersAttending;}
+    public int getPlayersRequired(){
+        return playersRequired;
+    }
+
+    public int getPlayersAttending(){
+        return playersAttending;
+    }
+
 }

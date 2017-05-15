@@ -85,6 +85,45 @@
             style="@style/EditorFieldStyle" />
     </LinearLayout>
 
+    <!-- Players required -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label Players required-->
+        <TextView
+            android:text="@string/label_playersRequired"
+            style="@style/EditorLabelStyle" />
+
+        <!-- Event Place field -->
+        <EditText
+            android:id="@+id/edit_players_required"
+            android:hint="@string/label_playersRequired"
+            android:inputType="textCapWords"
+            style="@style/EditorFieldStyle" />
+    </LinearLayout>
+
+    <!-- Players attending -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label Players required-->
+        <TextView
+            android:id="@+id/label_playersAttending"
+            android:text="@string/label_playersAttending"
+            style="@style/EditorLabelStyle" />
+
+        <!-- Event Place field -->
+        <EditText
+            android:id="@+id/edit_players_attending"
+            android:hint="@string/label_playersAttending"
+            android:inputType="textCapWords"
+            style="@style/EditorFieldStyle" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/button1"
         android:layout_width="180dp"
