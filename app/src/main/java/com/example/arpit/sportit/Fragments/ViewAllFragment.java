@@ -6,14 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,8 +18,6 @@ import com.example.arpit.sportit.Activities.EventEditorActivity;
 import com.example.arpit.sportit.Adapters.EventAdaptor;
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.R;
-import com.example.arpit.sportit.Adapters.RecyclerAdapter;
-import com.example.arpit.sportit.DataClasses.User;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,23 +25,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.example.arpit.sportit.R.id.fab;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ViewAllFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private RecyclerAdapter recyclerAdapter;
-    private RecyclerView.LayoutManager layoutManager;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReferenceEvents;
     private DatabaseReference databaseReferenceUsers;
