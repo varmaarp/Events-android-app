@@ -42,6 +42,11 @@ public class MyEventsFragment extends Fragment {
         // Required empty public constructor
     }
 
+
+    static class ViewHolder {
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -109,7 +114,7 @@ public class MyEventsFragment extends Fragment {
                 Event e = events.get(position);
                 Intent intent = new Intent(getContext(), EventEditorActivity.class);
                 intent.putExtra("EventID",e.getEventID());
-                intent.putExtra("Caller Method","event details");
+                    intent.putExtra("Caller Method","event details");
                 startActivity(intent);
             }
         });
