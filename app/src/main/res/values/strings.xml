@@ -17,13 +17,13 @@
     <string name="label_eventName">Event Name</string>
 
     <!--Label for Date -->
-    <string name="label_eventDate">Date</string>
+    <string name="label_eventDate">Event Date</string>
 
     <!--Label for Time -->
-    <string name="label_eventTime">Time</string>
+    <string name="label_eventTime">Event Time</string>
 
     <!--Label for Place -->
-    <string name="label_eventPlace">Place</string>
+    <string name="label_eventPlace">Event Place</string>
 
     <!--Label for Players Required -->
     <string name="label_playersRequired">Players Required</string>
@@ -31,8 +31,14 @@
     <!--Label for Players Attending -->
     <string name="label_playersAttending">Players Attending</string>
 
-    <!-- Label for editor menu option to save event and leave editor -->
+    <!-- Label for editor menu option to save event -->
     <string name="action_save">Save</string>
+
+    <!-- Label for editor menu option to edit event -->
+    <string name="action_edit">Edit</string>
+
+    <!-- Label for editor menu option to delete event -->
+    <string name="action_delete">Delete</string>
 
 
 </resources>

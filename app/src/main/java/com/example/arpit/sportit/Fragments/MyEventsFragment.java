@@ -37,15 +37,12 @@ public class MyEventsFragment extends Fragment {
     private DatabaseReference databaseReference;
     private EventAdaptor myEventsAdaptor;
     private ValueEventListener valueEventListener;
+    private ArrayList<Event> events;
 
     public MyEventsFragment() {
         // Required empty public constructor
     }
 
-
-    static class ViewHolder {
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,7 +53,7 @@ public class MyEventsFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
-        final ArrayList<Event> events = new ArrayList<Event>();
+        events = new ArrayList<Event>();
         myEventsAdaptor = new EventAdaptor(getActivity(), events);
 
         final TextView emptyStateTextView = (TextView) rootView.findViewById(R.id.empty_view);
@@ -114,7 +111,7 @@ public class MyEventsFragment extends Fragment {
                 Event e = events.get(position);
                 Intent intent = new Intent(getContext(), EventEditorActivity.class);
                 intent.putExtra("EventID",e.getEventID());
-                    intent.putExtra("Caller Method","event details");
+                intent.putExtra("Caller Method","event details");
                 startActivity(intent);
             }
         });

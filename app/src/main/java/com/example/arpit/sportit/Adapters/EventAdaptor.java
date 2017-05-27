@@ -54,7 +54,11 @@ public class EventAdaptor extends ArrayAdapter<Event> {
         Event currentEvent = getItem(position);
 
         holder.vEventName.setText(currentEvent.getEventName());
-        holder.vEventPlace.setText(currentEvent.getPlace());
+        if (currentEvent.getPlace().indexOf('|') != -1) {
+            holder.vEventPlace.setText(currentEvent.getPlace().substring(0, currentEvent.getPlace().indexOf('|')));
+        }else{
+            holder.vEventPlace.setText(currentEvent.getPlace());
+        }
         String dateTime = currentEvent.getDate() + ", " + currentEvent.getTime();
         holder.vEventDate.setText(dateTime);
         /*

@@ -77,10 +77,10 @@
             android:text="@string/label_eventPlace"
             style="@style/EditorLabelStyle" />
 
-        <!-- Event Place field -->
-        <EditText
-            android:id="@+id/edit_event_place"
-            android:hint="@string/label_eventPlace"
+        <!-- Event Place Selector -->
+        <Button
+            android:id="@+id/place_picker"
+            android:text="Select Place"
             android:inputType="textCapWords"
             style="@style/EditorFieldStyle" />
     </LinearLayout>
