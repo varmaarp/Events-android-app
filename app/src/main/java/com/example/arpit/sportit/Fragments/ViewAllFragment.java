@@ -98,7 +98,8 @@ public class ViewAllFragment extends Fragment {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Event e = postSnapshot.getValue(Event.class);
                     if (!e.getCreatedBy().contentEquals("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2") &&
-                            !eventIds.contains(postSnapshot.getKey())) {
+                            !eventIds.contains(postSnapshot.getKey())
+                            && !e.getIsCancelled()) {
                             e.setEventID(postSnapshot.getKey());
                             events.add(e);
                             myEventsAdaptor.notifyDataSetChanged();

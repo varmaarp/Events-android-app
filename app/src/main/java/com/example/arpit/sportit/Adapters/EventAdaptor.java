@@ -39,8 +39,7 @@ public class EventAdaptor extends ArrayAdapter<Event> {
         ViewHolderItem holder;
 
         if (convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.list_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
             holder = new ViewHolderItem();
             holder.vEventName = (TextView) convertView.findViewById(R.id.event_name);
             holder.vEventPlace = (TextView) convertView.findViewById(R.id.event_place);
@@ -53,7 +52,11 @@ public class EventAdaptor extends ArrayAdapter<Event> {
 
         Event currentEvent = getItem(position);
 
-        holder.vEventName.setText(currentEvent.getEventName());
+        if (currentEvent.getIsCancelled()) {
+            holder.vEventName.setText(currentEvent.getEventName() + " - CANCELLED");
+        }else{
+            holder.vEventName.setText(currentEvent.getEventName());
+        }
         if (currentEvent.getPlace().indexOf('|') != -1) {
             holder.vEventPlace.setText(currentEvent.getPlace().substring(0, currentEvent.getPlace().indexOf('|')));
         }else{
@@ -61,28 +64,6 @@ public class EventAdaptor extends ArrayAdapter<Event> {
         }
         String dateTime = currentEvent.getDate() + ", " + currentEvent.getTime();
         holder.vEventDate.setText(dateTime);
-        /*
-        View listItemView = convertView;
-
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.list_item, parent, false);
-        }
-
-        Event currentEvent = getItem(position);
-
-        TextView eventName = (TextView) listItemView.findViewById(R.id.event_name);
-        eventName.setText(currentEvent.getEventName());
-
-        String dateTime = currentEvent.getDate() + ", " + currentEvent.getTime();
-        TextView eventDateTime = (TextView) listItemView.findViewById(R.id.event_date);
-        eventDateTime.setText(dateTime);
-
-        TextView eventPlace = (TextView) listItemView.findViewById(R.id.event_place);
-        eventPlace.setText(currentEvent.getPlace());
-
-        return listItemView;
-        */
 
         return convertView;
     }

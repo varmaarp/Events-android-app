@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,7 +60,6 @@ public class EventEditorActivity extends AppCompatActivity {
     int PLACE_PICKER_REQUEST = 1;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,20 +87,26 @@ public class EventEditorActivity extends AppCompatActivity {
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                e = dataSnapshot.getValue(Event.class);
-                eventNameEditText.setText(e.getEventName());
-                eventDateEditText.setText(e.getDate());
-                eventTimeEditText.setText(e.getTime());
-                playersRequiredEditText.setText(""+e.getPlayersRequired());
-                location = e.getPlace();
-                loc = location.split("[|]");
-                placePickerButton.setText(loc[0]);
-                lat = Double.parseDouble(loc[1]);
-                lon = Double.parseDouble(loc[2]);
-                playersAttendingEditText.setText(""+e.getPlayersAttending());
-                if (e.getPlayersRequired() == e.getPlayersAttending() &&
-                        previousActivity.contentEquals("view all events")) {
-                    button1.setVisibility(View.GONE);
+                if (dataSnapshot.hasChildren()) {
+                    e = dataSnapshot.getValue(Event.class);
+                    eventNameEditText.setText(e.getEventName());
+                    eventDateEditText.setText(e.getDate());
+                    eventTimeEditText.setText(e.getTime());
+                    playersRequiredEditText.setText("" + e.getPlayersRequired());
+                    location = e.getPlace();
+                    loc = location.split("[|]");
+                    placePickerButton.setText(loc[0]);
+                    lat = Double.parseDouble(loc[1]);
+                    lon = Double.parseDouble(loc[2]);
+                    playersAttendingEditText.setText("" + e.getPlayersAttending());
+                    if (e.getPlayersRequired() == e.getPlayersAttending() &&
+                            previousActivity.contentEquals("view all events")) {
+                        button1.setVisibility(View.GONE);
+                    }
+                    if (e.getIsCancelled() &&
+                            previousActivity.contentEquals("event details attending")){
+                        button2.setVisibility(View.GONE);
+                    }
                 }
             }
 
@@ -109,6 +115,7 @@ public class EventEditorActivity extends AppCompatActivity {
                 Log.v("Error","Database Error");
             }
         };
+
 
         if (eventID != null){
             databaseReference.child("events").child(eventID).addValueEventListener(valueEventListener);
@@ -283,6 +290,10 @@ public class EventEditorActivity extends AppCompatActivity {
             case R.id.action_edit:
                 startEditEvent();
                 return true;
+            case R.id.action_delete:
+                deleteEvent();
+                finish();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -336,6 +347,15 @@ public class EventEditorActivity extends AppCompatActivity {
         databaseReference.child("users").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").child("eventsAttending").child(eventID).removeValue();
     }
 
+    private void deleteEvent(){
+        Map<String,Object> update = new HashMap<>();
+        update.put("events/"+eventID+"/isCancelled",true);
+        databaseReference.updateChildren(update);
+        Log.v("players ", "players attending value " + e.getPlayersAttending());
+        if (e.getPlayersAttending() == 0){
+            databaseReference.child("events").child(eventID).removeValue();
+        }
+    }
 
     private void startEditEvent(){
         Intent intent = new Intent(this, EventEditorActivity.class);
@@ -344,6 +364,7 @@ public class EventEditorActivity extends AppCompatActivity {
         intent.putExtra("Caller Method","edit event");
         startActivity(intent);
     }
+
 
     private void enableEditing(){
         eventNameEditText.setEnabled(true);
@@ -362,6 +383,6 @@ public class EventEditorActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        databaseReference.child("events").child(eventID).removeEventListener(valueEventListener);
+        databaseReference.removeEventListener(valueEventListener);
     }
 }

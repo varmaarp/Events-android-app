@@ -73,11 +73,13 @@ public class MyEventsFragment extends Fragment {
                 myEventsAdaptor.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Event e = postSnapshot.getValue(Event.class);
-                    e.setEventID(postSnapshot.getKey());
-                    events.add(e);
-                    myEventsAdaptor.notifyDataSetChanged();
-                    loadingIndicator.setVisibility(View.GONE);
-                    emptyStateTextView.setVisibility(View.GONE);
+                    if (!e.getIsCancelled()) {
+                        e.setEventID(postSnapshot.getKey());
+                        events.add(e);
+                        myEventsAdaptor.notifyDataSetChanged();
+                        loadingIndicator.setVisibility(View.GONE);
+                        emptyStateTextView.setVisibility(View.GONE);
+                    }
                 }
                 if (myEventsAdaptor.isEmpty()){
                     loadingIndicator.setVisibility(View.GONE);

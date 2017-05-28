@@ -18,6 +18,7 @@ public class Event {
         this.createdBy = createdBy;
         this.playersRequired = playersRequired;
         this.playersAttending = 0;
+        this.isCancelled = false;
     };
 
     private String eventName;
@@ -35,6 +36,8 @@ public class Event {
     private int playersRequired;
 
     private int playersAttending;
+
+    private boolean isCancelled;
 
     public String getEventName(){
         return eventName;
@@ -71,5 +74,7 @@ public class Event {
     public int getPlayersAttending(){
         return playersAttending;
     }
+
+    public boolean getIsCancelled(){ return isCancelled; }
 
 }
