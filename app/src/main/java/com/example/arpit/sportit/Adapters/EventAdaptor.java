@@ -4,10 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.TextView;
 
 
@@ -15,12 +17,18 @@ import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.R;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static android.R.attr.filter;
 
 /**
  * Created by Arpit on 09-05-2017.
  */
 
 public class EventAdaptor extends ArrayAdapter<Event> {
+
+    private ArrayList<Event> filteredData;
+    private ArrayList<Event> originalData;
 
     static class ViewHolderItem{
         private TextView vEventName;
@@ -30,6 +38,7 @@ public class EventAdaptor extends ArrayAdapter<Event> {
 
     public EventAdaptor(Context context, ArrayList<Event> events){
         super(context, 0, events);
+        filteredData = events;
     }
 
     @NonNull
@@ -68,5 +77,54 @@ public class EventAdaptor extends ArrayAdapter<Event> {
         return convertView;
     }
 
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence prefix) {
+                final FilterResults results = new FilterResults();
+
+                if (originalData == null) {
+                        originalData = new ArrayList<>(filteredData);
+                }
+
+                if (prefix == null || prefix.length() == 0) {
+                    final ArrayList<Event> list = new ArrayList<>(originalData);
+
+                    results.values = list;
+                    results.count = list.size();
+                } else {
+                    final String prefixString = prefix.toString().toLowerCase();
+
+                    final ArrayList<Event> values = new ArrayList<>(originalData);
+
+                    final ArrayList<Event> newValues = new ArrayList<>();
+
+                    for (Event e : values){
+                        if (e.getEventName().toLowerCase().contains(prefixString)) {
+                            newValues.add(e);
+                        }
+                    }
+
+                    results.values = newValues;
+                    results.count = newValues.size();
+                }
+
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                Log.v("results","results published " + results.count);
+                filteredData = (ArrayList<Event>) results.values;
+                notifyDataSetChanged();
+                clear();
+                addAll(filteredData);
+                notifyDataSetInvalidated();
+
+            }
+        };
+    }
 
 }

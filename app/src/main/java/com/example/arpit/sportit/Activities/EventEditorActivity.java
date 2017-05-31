@@ -1,5 +1,6 @@
 package com.example.arpit.sportit.Activities;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.example.arpit.sportit.DataClasses.Event;
@@ -29,10 +31,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static android.R.attr.data;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static java.security.AccessController.getContext;
 
@@ -57,6 +61,7 @@ public class EventEditorActivity extends AppCompatActivity {
     private Double lon;
     private Event e;
     private String[] loc;
+    private java.util.Calendar cal;
     int PLACE_PICKER_REQUEST = 1;
 
 
@@ -69,6 +74,17 @@ public class EventEditorActivity extends AppCompatActivity {
         //firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = firebaseDatabase.getReference();
 
+        cal = java.util.Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                cal.set(java.util.Calendar.YEAR, year);
+                cal.set(java.util.Calendar.MONTH,month);
+                cal.set(java.util.Calendar.DAY_OF_MONTH, dayOfMonth);
+                update();
+            }
+        };
+
         eventNameEditText = (EditText) findViewById(R.id.edit_event_name);
         eventDateEditText = (EditText) findViewById(R.id.edit_event_date);
         eventTimeEditText = (EditText) findViewById(R.id.edit_event_time);
@@ -79,6 +95,13 @@ public class EventEditorActivity extends AppCompatActivity {
 
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
+
+        eventDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(EventEditorActivity.this, date, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
+            }
+        });
 
         Intent intent = getIntent();
         previousActivity = intent.getStringExtra("Caller Method");
@@ -216,6 +239,7 @@ public class EventEditorActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     @Override
@@ -316,6 +340,7 @@ public class EventEditorActivity extends AppCompatActivity {
                 Log.v("in edit","in edit " + location);
 
                 Map<String,Object> update = new HashMap<>();
+
                 update.put("events/"+eventID+"/date",eventDate);
                 update.put("events/"+eventID+"/eventName",eventName);
                 update.put("events/"+eventID+"/place",location);
@@ -378,6 +403,12 @@ public class EventEditorActivity extends AppCompatActivity {
         eventDateEditText.setEnabled(false);
         eventTimeEditText.setEnabled(false);
         playersRequiredEditText.setEnabled(false);
+    }
+
+    private void update(){
+        String myFormat = "dd MMM yyyy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        eventDateEditText.setText(sdf.format(cal.getTime()));
     }
 
     @Override
