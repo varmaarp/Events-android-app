@@ -1,6 +1,7 @@
 package com.example.arpit.sportit.Activities;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.R;
@@ -62,6 +64,8 @@ public class EventEditorActivity extends AppCompatActivity {
     private Event e;
     private String[] loc;
     private java.util.Calendar cal;
+    int hour;
+    int min;
     int PLACE_PICKER_REQUEST = 1;
 
 
@@ -100,6 +104,23 @@ public class EventEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 new DatePickerDialog(EventEditorActivity.this, date, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        eventTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(EventEditorActivity.this, new TimePickerDialog.OnTimeSetListener() {
+
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        boolean isPM = (hourOfDay >= 12);
+                        hour = hourOfDay;
+                        min = minute;
+                        eventTimeEditText.setText(String.format("%02d:%02d %s", (hourOfDay == 12 || hourOfDay == 0) ? 12 : hourOfDay % 12, minute, isPM ? "PM" : "AM"));
+                    }
+                }, hour, min, false);
+                timePickerDialog.show();
             }
         });
 

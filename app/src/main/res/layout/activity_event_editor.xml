@@ -59,11 +59,12 @@
             android:text="@string/label_eventTime"
             style="@style/EditorLabelStyle" />
 
-        <!-- Event Name field -->
+        <!-- Event Time field -->
         <EditText
             android:id="@+id/edit_event_time"
             android:hint="@string/label_eventTime"
             android:inputType="textCapWords"
+            android:focusable="false"
             style="@style/EditorFieldStyle" />
     </LinearLayout>
 

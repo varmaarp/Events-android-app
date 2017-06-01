@@ -180,6 +180,7 @@ public class ViewAllFragment extends Fragment {
         super.onDestroy();
         myEventsAdaptor.clear();
         databaseReferenceEvents.removeEventListener(valueEventListener);
+        databaseReferenceEvents.removeEventListener(valueEventListener2);
     }
 
 
