@@ -16,8 +16,13 @@ import android.widget.TextView;
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static android.R.attr.filter;
 
@@ -71,7 +76,18 @@ public class EventAdaptor extends ArrayAdapter<Event> {
         }else{
             holder.vEventPlace.setText(currentEvent.getPlace());
         }
-        String dateTime = currentEvent.getDate() + ", " + currentEvent.getTime();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        Date local = null;
+        try {
+            Date convertedDate = sdf.parse(currentEvent.getDateTime());
+            String timeZoneID = Calendar.getInstance().getTimeZone().getID();
+            local = new Date(convertedDate.getTime() + TimeZone.getTimeZone(timeZoneID).getOffset(convertedDate.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        sdf = new SimpleDateFormat("dd MMM yyyy, h:mm a");
+        String dateTime = sdf.format(local);
         holder.vEventDate.setText(dateTime);
 
         return convertView;

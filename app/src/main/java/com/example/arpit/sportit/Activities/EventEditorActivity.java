@@ -33,12 +33,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Console;
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static android.R.attr.data;
+import static android.R.attr.y;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static java.security.AccessController.getContext;
 
@@ -64,10 +71,12 @@ public class EventEditorActivity extends AppCompatActivity {
     private Event e;
     private String[] loc;
     private java.util.Calendar cal;
+    int eventYear, eventMonth, eventDay;
     int hour;
     int min;
+    private String[] localDateTime;
     int PLACE_PICKER_REQUEST = 1;
-
+    private static String timeZoneID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +88,17 @@ public class EventEditorActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference();
 
         cal = java.util.Calendar.getInstance();
+        timeZoneID = cal.getTimeZone().getID();
+
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 cal.set(java.util.Calendar.YEAR, year);
+                eventYear = year;
                 cal.set(java.util.Calendar.MONTH,month);
+                eventMonth = month;
                 cal.set(java.util.Calendar.DAY_OF_MONTH, dayOfMonth);
+                eventDay = dayOfMonth;
                 update();
             }
         };
@@ -117,6 +131,7 @@ public class EventEditorActivity extends AppCompatActivity {
                         boolean isPM = (hourOfDay >= 12);
                         hour = hourOfDay;
                         min = minute;
+
                         eventTimeEditText.setText(String.format("%02d:%02d %s", (hourOfDay == 12 || hourOfDay == 0) ? 12 : hourOfDay % 12, minute, isPM ? "PM" : "AM"));
                     }
                 }, hour, min, false);
@@ -134,9 +149,10 @@ public class EventEditorActivity extends AppCompatActivity {
                 if (dataSnapshot.hasChildren()) {
                     e = dataSnapshot.getValue(Event.class);
                     eventNameEditText.setText(e.getEventName());
-                    eventDateEditText.setText(e.getDate());
-                    eventTimeEditText.setText(e.getTime());
                     playersRequiredEditText.setText("" + e.getPlayersRequired());
+                    localDateTime = utcToLocal(e.getDateTime());
+                    eventDateEditText.setText(localDateTime[0]);
+                    eventTimeEditText.setText(localDateTime[1]);
                     location = e.getPlace();
                     loc = location.split("[|]");
                     placePickerButton.setText(loc[0]);
@@ -348,26 +364,26 @@ public class EventEditorActivity extends AppCompatActivity {
         String userID = "RMBIva5WdIZyE7zcTbcQ8SPAGlZ2";
         if (!userID.isEmpty()) {
             String eventName = eventNameEditText.getText().toString().trim();
-            String eventDate = eventDateEditText.getText().toString().trim();
             String eventPlace = location;
-            String eventTime = eventTimeEditText.getText().toString().trim();
             int playersRequired = Integer.parseInt(playersRequiredEditText.getText().toString().trim());
 
+            cal.set(eventYear,eventMonth,eventDay,hour,min);
+            Date date = cal.getTime();
+            String eventDateTime = localToUTC(date);
+
             if ((previousActivity.contentEquals("event add"))) {
-                Event event = new Event(eventName, eventPlace, eventDate, eventTime, userID, playersRequired);
+                Event event = new Event(eventName, eventPlace, eventDateTime, userID, playersRequired);
                 databaseReference.child("events").push().setValue(event);
             }
             else if ((previousActivity.contentEquals("edit event"))){
-                Log.v("in edit","in edit " + location);
 
                 Map<String,Object> update = new HashMap<>();
 
-                update.put("events/"+eventID+"/date",eventDate);
                 update.put("events/"+eventID+"/eventName",eventName);
                 update.put("events/"+eventID+"/place",location);
-                update.put("events/"+eventID+"/time",eventTime);
-                databaseReference.updateChildren(update);
+                update.put("events/"+eventID+"/dateTime",eventDateTime);
 
+                databaseReference.updateChildren(update);
             }
         }
         else{
@@ -427,9 +443,40 @@ public class EventEditorActivity extends AppCompatActivity {
     }
 
     private void update(){
-        String myFormat = "dd MMM yyyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
         eventDateEditText.setText(sdf.format(cal.getTime()));
+    }
+
+    private static String localToUTC(Date date) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf.format(date);
+    }
+
+    private String[] utcToLocal(String date){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        String[] localDateTime = new String[2];
+        try {
+            Date convertedDate = sdf.parse(date);
+
+            Date local = new Date(convertedDate.getTime() + TimeZone.getTimeZone(timeZoneID).getOffset(convertedDate.getTime()));
+            cal.setTime(local);
+            eventYear = cal.get(Calendar.YEAR);
+            eventMonth = cal.get(Calendar.MONTH);
+            eventDay = cal.get(Calendar.DAY_OF_MONTH);
+            hour = cal.get(Calendar.HOUR_OF_DAY);
+            min = cal.get(Calendar.MINUTE);
+            SimpleDateFormat sdfLocalDate = new SimpleDateFormat("dd MMM yyyy");
+            localDateTime[0] = sdfLocalDate.format(local);
+            SimpleDateFormat sdfLocalTime = new SimpleDateFormat("h:mm a");
+            localDateTime[1] = sdfLocalTime.format(local);
+            Log.v("local date","Local date : "+localDateTime[0]);
+            Log.v("local time","Local Time : "+localDateTime[1]);
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+        return localDateTime;
     }
 
     @Override

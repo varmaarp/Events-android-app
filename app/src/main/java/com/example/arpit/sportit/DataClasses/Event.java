@@ -10,11 +10,10 @@ public class Event {
 
     public Event(){}
 
-    public Event(String eventName, String place, String date, String time, String createdBy, int playersRequired){
+    public Event(String eventName, String place, String dateTime, String createdBy, int playersRequired){
         this.eventName = eventName;
         this.place = place;
-        this.date = date;
-        this.time = time;
+        this.dateTime = dateTime;
         this.createdBy = createdBy;
         this.playersRequired = playersRequired;
         this.playersAttending = 0;
@@ -25,13 +24,11 @@ public class Event {
 
     private String place;
 
-    private String date;
-
-    private String time;
-
     private String eventID;
 
     private String createdBy;
+
+    private String dateTime;
 
     private int playersRequired;
 
@@ -47,21 +44,15 @@ public class Event {
         return createdBy;
     }
 
-    public String getDate() {
-        return date;
-    }
-
     public String getPlace() {
         return place;
-    }
-
-    public String getTime() {
-        return time;
     }
 
     public String getEventID() {
         return eventID;
     }
+
+    public String getDateTime() { return dateTime; }
 
     public void setEventID(String eventID) {
         this.eventID = eventID;
