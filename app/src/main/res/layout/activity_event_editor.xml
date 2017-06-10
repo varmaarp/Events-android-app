@@ -28,6 +28,56 @@
             style="@style/EditorFieldStyle" />
     </LinearLayout>
 
+    <!-- Event Type -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/event_type">
+
+        <!-- Label Event Type-->
+        <TextView
+            android:text="@string/event_category"
+            style="@style/EditorLabelStyle" />
+
+        <!-- Event Type field -->
+        <EditText
+            android:id="@+id/edit_event_type"
+            android:inputType="textCapWords"
+            android:enabled="false"
+            style="@style/EditorFieldStyle" />
+    </LinearLayout>
+
+    <!-- Event category -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/event_spinner">
+
+        <!-- Label -->
+        <TextView
+            android:text="@string/event_category"
+            style="@style/EditorLabelStyle" />
+
+        <!-- Input field -->
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <!-- Event type drop-down spinner -->
+            <Spinner
+                android:id="@+id/sport_spinner"
+                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:paddingRight="16dp"
+                android:spinnerMode="dropdown"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
     <!-- Event Date -->
     <LinearLayout
         android:layout_width="match_parent"

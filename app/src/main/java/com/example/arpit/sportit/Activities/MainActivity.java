@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         };
         */
 
+
         // Find the view pager that will allow the user to swipe between fragments
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
 
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /*
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    */
+
 
     @Override
     protected void onResume() {
@@ -157,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         // Find the tab layout that shows the tabs
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
 
     }
 }

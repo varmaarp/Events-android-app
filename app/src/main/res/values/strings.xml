@@ -43,4 +43,18 @@
     <!-- Label for editor menu option to delete event -->
     <string name="search_title">Search...</string>
 
+    <string name="event_category">Event Type</string>
+
+    <!-- Label for event sport option to select event -->
+    <string-array name="sports_array">
+        <item>Cricket</item>
+        <item>Football</item>
+        <item>Tennis</item>
+        <item>Badminton</item>
+        <item>Rugby</item>
+        <item>Basketball</item>
+        <item>Volleyball</item>
+        <item>Baseball</item>
+    </string-array>
+
 </resources>

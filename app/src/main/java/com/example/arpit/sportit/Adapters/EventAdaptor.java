@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -39,6 +40,7 @@ public class EventAdaptor extends ArrayAdapter<Event> {
         private TextView vEventName;
         private TextView vEventPlace;
         private TextView vEventDate;
+        private ImageView vImageView;
     }
 
     public EventAdaptor(Context context, ArrayList<Event> events){
@@ -58,6 +60,7 @@ public class EventAdaptor extends ArrayAdapter<Event> {
             holder.vEventName = (TextView) convertView.findViewById(R.id.event_name);
             holder.vEventPlace = (TextView) convertView.findViewById(R.id.event_place);
             holder.vEventDate = (TextView) convertView.findViewById(R.id.event_date);
+            holder.vImageView = (ImageView) convertView.findViewById(R.id.image);
             convertView.setTag(holder);
         }
         else{
@@ -71,6 +74,7 @@ public class EventAdaptor extends ArrayAdapter<Event> {
         }else{
             holder.vEventName.setText(currentEvent.getEventName());
         }
+
         if (currentEvent.getPlace().indexOf('|') != -1) {
             holder.vEventPlace.setText(currentEvent.getPlace().substring(0, currentEvent.getPlace().indexOf('|')));
         }else{
@@ -89,6 +93,8 @@ public class EventAdaptor extends ArrayAdapter<Event> {
         sdf = new SimpleDateFormat("dd MMM yyyy, h:mm a");
         String dateTime = sdf.format(local);
         holder.vEventDate.setText(dateTime);
+
+        holder.vImageView.setImageResource(currentEvent.getImageResourceId());
 
         return convertView;
     }

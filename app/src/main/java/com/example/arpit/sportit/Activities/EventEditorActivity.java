@@ -11,9 +11,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import com.example.arpit.sportit.DataClasses.Event;
@@ -77,6 +80,11 @@ public class EventEditorActivity extends AppCompatActivity {
     private String[] localDateTime;
     int PLACE_PICKER_REQUEST = 1;
     private static String timeZoneID;
+    private View eventType;
+    private View eventSpinner;
+    private EditText eventTypeEditText;
+    private String sport;
+    private int imageID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +116,11 @@ public class EventEditorActivity extends AppCompatActivity {
         eventTimeEditText = (EditText) findViewById(R.id.edit_event_time);
         playersAttendingEditText = (EditText) findViewById(R.id.edit_players_attending);
         playersRequiredEditText = (EditText) findViewById(R.id.edit_players_required);
+        eventTypeEditText = (EditText) findViewById(R.id.edit_event_type);
         placePickerButton = (Button) findViewById(R.id.place_picker);
+        eventType = findViewById(R.id.event_type);
+        eventSpinner = findViewById(R.id.event_spinner);
+
         playersAttendingEditText.setEnabled(false);
 
         button1 = (Button) findViewById(R.id.button1);
@@ -139,6 +151,30 @@ public class EventEditorActivity extends AppCompatActivity {
             }
         });
 
+        //        //Instantiate the spinner element for sports category
+        final Spinner spinner = (Spinner) findViewById(R.id.sport_spinner);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.sports_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {      //https://developer.android.com/guide/topics/ui/controls/spinner.html
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // On selecting a spinner item
+                sport = parent.getItemAtPosition(position).toString();
+                Log.v("sport selected","sport is "+ sport);
+            }
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
+
         Intent intent = getIntent();
         previousActivity = intent.getStringExtra("Caller Method");
         eventID = intent.getStringExtra("EventID");
@@ -150,6 +186,8 @@ public class EventEditorActivity extends AppCompatActivity {
                     e = dataSnapshot.getValue(Event.class);
                     eventNameEditText.setText(e.getEventName());
                     playersRequiredEditText.setText("" + e.getPlayersRequired());
+                    eventTypeEditText.setText(e.getEventType());
+                    spinner.setSelection(adapter.getPosition(e.getEventType()));
                     localDateTime = utcToLocal(e.getDateTime());
                     eventDateEditText.setText(localDateTime[0]);
                     eventTimeEditText.setText(localDateTime[1]);
@@ -186,6 +224,8 @@ public class EventEditorActivity extends AppCompatActivity {
             button1.setText("Save");
             button2.setVisibility(View.GONE);
             button1.setVisibility(View.VISIBLE);
+            eventSpinner.setVisibility(View.VISIBLE);
+            eventType.setVisibility(View.GONE);
             playersAttendingEditText.setVisibility(View.GONE);
             findViewById(R.id.label_playersAttending).setVisibility(View.GONE);
             enableEditing();
@@ -195,6 +235,8 @@ public class EventEditorActivity extends AppCompatActivity {
             setTitle("Event Details");
             button1.setVisibility(View.GONE);
             button2.setVisibility(View.VISIBLE);
+            eventSpinner.setVisibility(View.GONE);
+            eventType.setVisibility(View.VISIBLE);
             playersAttendingEditText.setVisibility(View.VISIBLE);
             findViewById(R.id.label_playersAttending).setVisibility(View.VISIBLE);
             disableEditing();
@@ -205,6 +247,8 @@ public class EventEditorActivity extends AppCompatActivity {
             button1.setText("Withdraw");
             button2.setVisibility(View.VISIBLE);
             button1.setVisibility(View.VISIBLE);
+            eventSpinner.setVisibility(View.GONE);
+            eventType.setVisibility(View.VISIBLE);
             playersAttendingEditText.setVisibility(View.VISIBLE);
             findViewById(R.id.label_playersAttending).setVisibility(View.VISIBLE);
             disableEditing();
@@ -215,6 +259,8 @@ public class EventEditorActivity extends AppCompatActivity {
             button1.setText("Join");
             button2.setVisibility(View.VISIBLE);
             playersAttendingEditText.setVisibility(View.VISIBLE);
+            eventSpinner.setVisibility(View.GONE);
+            eventType.setVisibility(View.VISIBLE);
             findViewById(R.id.label_playersAttending).setVisibility(View.VISIBLE);
             disableEditing();
             invalidateOptionsMenu();
@@ -224,6 +270,8 @@ public class EventEditorActivity extends AppCompatActivity {
             button1.setText("Save");
             button2.setVisibility(View.GONE);
             button1.setVisibility(View.VISIBLE);
+            eventSpinner.setVisibility(View.VISIBLE);
+            eventType.setVisibility(View.GONE);
             playersAttendingEditText.setVisibility(View.GONE);
             findViewById(R.id.label_playersAttending).setVisibility(View.GONE);
             enableEditing();
@@ -366,13 +414,13 @@ public class EventEditorActivity extends AppCompatActivity {
             String eventName = eventNameEditText.getText().toString().trim();
             String eventPlace = location;
             int playersRequired = Integer.parseInt(playersRequiredEditText.getText().toString().trim());
-
+            imageID = findImageID();
             cal.set(eventYear,eventMonth,eventDay,hour,min);
             Date date = cal.getTime();
             String eventDateTime = localToUTC(date);
 
             if ((previousActivity.contentEquals("event add"))) {
-                Event event = new Event(eventName, eventPlace, eventDateTime, userID, playersRequired);
+                Event event = new Event(eventName, eventPlace, eventDateTime, userID, sport, playersRequired,imageID);
                 databaseReference.child("events").push().setValue(event);
             }
             else if ((previousActivity.contentEquals("edit event"))){
@@ -380,9 +428,10 @@ public class EventEditorActivity extends AppCompatActivity {
                 Map<String,Object> update = new HashMap<>();
 
                 update.put("events/"+eventID+"/eventName",eventName);
+                update.put("events/"+eventID+"/eventType",sport);
                 update.put("events/"+eventID+"/place",location);
                 update.put("events/"+eventID+"/dateTime",eventDateTime);
-
+                update.put("events/"+eventID+"/imageResourceId",imageID);
                 databaseReference.updateChildren(update);
             }
         }
@@ -477,6 +526,28 @@ public class EventEditorActivity extends AppCompatActivity {
             e1.printStackTrace();
         }
         return localDateTime;
+    }
+
+    private int findImageID(){
+        switch (sport){
+            case "Cricket":
+                return R.drawable.cricket;
+            case "Football":
+                return R.drawable.football;
+            case "Tennis":
+                return R.drawable.tennis;
+            case "Badminton":
+                return R.drawable.badminton;
+            case "Rugby":
+                return R.drawable.rugby;
+            case "Basketball":
+                return R.drawable.basketball;
+            case "Volleyball":
+                return R.drawable.volleyball;
+            case "Baseball":
+                return R.drawable.baseball;
+        }
+        return -1;
     }
 
     @Override
