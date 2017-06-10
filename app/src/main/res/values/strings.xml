@@ -57,4 +57,21 @@
         <item>Baseball</item>
     </string-array>
 
+    <string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>
+
+    <!-- Dialog button text for the option to discard a user's changes-->
+    <string name="discard">Discard</string>
+
+    <!-- Dialog button text for the option to keep editing the current event-->
+    <string name="keep_editing">Keep Editing</string>
+
+    <!-- Dialog button text for the option to confirm deleting the current event -->
+    <string name="delete">Delete</string>
+
+    <!-- Dialog button text for the option to cancel deletion of the current event -->
+    <string name="cancel">Cancel</string>
+
+    <!-- Dialog message to ask the user to confirm deleting the current event -->
+    <string name="delete_dialog_msg">Delete this event?</string>
+
 </resources>

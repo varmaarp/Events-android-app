@@ -1,7 +1,9 @@
 package com.example.arpit.sportit.Activities;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -84,7 +87,64 @@ public class EventEditorActivity extends AppCompatActivity {
     private View eventSpinner;
     private EditText eventTypeEditText;
     private String sport;
+    private Spinner spinner;
     private int imageID;
+
+    /** Boolean flag that keeps track of whether the event has been edited (true) or not (false) */
+    private boolean eventHasChanged = false;
+
+    private View.OnTouchListener touchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            eventHasChanged = true;
+            return false;
+        }
+    };
+
+    private void showUnsavedChangesDialog(
+            DialogInterface.OnClickListener discardButtonClickListener) {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the positive and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.unsaved_changes_dialog_msg);
+        builder.setPositiveButton(R.string.discard, discardButtonClickListener);
+        builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Keep editing" button, so dismiss the dialog
+                // and continue editing event.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!eventHasChanged) {
+            super.onBackPressed();
+            return;
+        }
+
+        // Otherwise if there are unsaved changes, setup a dialog to warn the user.
+        // Create a click listener to handle the user confirming that changes should be discarded.
+        DialogInterface.OnClickListener discardButtonClickListener =
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // User clicked "Discard" button, close the current activity.
+                        finish();
+                    }
+                };
+
+        // Show dialog that there are unsaved changes
+        showUnsavedChangesDialog(discardButtonClickListener);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,8 +178,15 @@ public class EventEditorActivity extends AppCompatActivity {
         playersRequiredEditText = (EditText) findViewById(R.id.edit_players_required);
         eventTypeEditText = (EditText) findViewById(R.id.edit_event_type);
         placePickerButton = (Button) findViewById(R.id.place_picker);
+        spinner = (Spinner) findViewById(R.id.sport_spinner);
         eventType = findViewById(R.id.event_type);
         eventSpinner = findViewById(R.id.event_spinner);
+
+        eventNameEditText.setOnTouchListener(touchListener);
+        eventDateEditText.setOnTouchListener(touchListener);
+        eventTimeEditText.setOnTouchListener(touchListener);
+        playersRequiredEditText.setOnTouchListener(touchListener);
+        spinner.setOnTouchListener(touchListener);
 
         playersAttendingEditText.setEnabled(false);
 
@@ -400,8 +467,7 @@ public class EventEditorActivity extends AppCompatActivity {
                 startEditEvent();
                 return true;
             case R.id.action_delete:
-                deleteEvent();
-                finish();
+                showDeleteConfirmationDialog();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -466,6 +532,31 @@ public class EventEditorActivity extends AppCompatActivity {
         if (e.getPlayersAttending() == 0){
             databaseReference.child("events").child(eventID).removeValue();
         }
+    }
+
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the postive and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the event.
+                deleteEvent();
+                finish();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private void startEditEvent(){
