@@ -59,7 +59,7 @@ public class MyEventsFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
-        events = new ArrayList<Event>();
+        events = new ArrayList<>();
         myEventsAdaptor = new EventAdaptor(getActivity(), events);
 
         final TextView emptyStateTextView = (TextView) rootView.findViewById(R.id.empty_view);

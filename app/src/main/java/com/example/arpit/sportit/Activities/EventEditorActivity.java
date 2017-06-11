@@ -21,6 +21,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.R;
@@ -196,7 +197,9 @@ public class EventEditorActivity extends AppCompatActivity {
         eventDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(EventEditorActivity.this, date, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(EventEditorActivity.this, date, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH));
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                datePickerDialog.show();
             }
         });
 
@@ -217,9 +220,6 @@ public class EventEditorActivity extends AppCompatActivity {
                 timePickerDialog.show();
             }
         });
-
-        //        //Instantiate the spinner element for sports category
-        final Spinner spinner = (Spinner) findViewById(R.id.sport_spinner);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
 
@@ -352,6 +352,7 @@ public class EventEditorActivity extends AppCompatActivity {
                 if ((previousActivity.contentEquals("view all events"))){
                     if (e.getPlayersRequired() > e.getPlayersAttending()) {
                         joinEvent(e.getPlayersAttending());
+                        finish();
                     }
                 }
                 else if (previousActivity.contentEquals("event add") ||
@@ -360,9 +361,8 @@ public class EventEditorActivity extends AppCompatActivity {
                 }
                 else if (previousActivity.contentEquals("event details attending")){
                     leaveEvent(e.getPlayersAttending());
+                    finish();
                 }
-                e = null;
-                finish();
             }
         });
 
@@ -461,7 +461,6 @@ public class EventEditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_save:
                 saveEventData();
-                finish();
                 return true;
             case R.id.action_edit:
                 startEditEvent();
@@ -477,28 +476,61 @@ public class EventEditorActivity extends AppCompatActivity {
         //String userID = firebaseAuth.getCurrentUser().getUid();
         String userID = "RMBIva5WdIZyE7zcTbcQ8SPAGlZ2";
         if (!userID.isEmpty()) {
+            boolean validData = true;
             String eventName = eventNameEditText.getText().toString().trim();
             String eventPlace = location;
-            int playersRequired = Integer.parseInt(playersRequiredEditText.getText().toString().trim());
-            imageID = findImageID();
-            cal.set(eventYear,eventMonth,eventDay,hour,min);
-            Date date = cal.getTime();
-            String eventDateTime = localToUTC(date);
-
-            if ((previousActivity.contentEquals("event add"))) {
-                Event event = new Event(eventName, eventPlace, eventDateTime, userID, sport, playersRequired,imageID);
-                databaseReference.child("events").push().setValue(event);
+            int playersRequired = -1;
+            try {
+                playersRequired = Integer.parseInt(playersRequiredEditText.getText().toString().trim());
+                if(!isValidPlayersRequired(playersRequired)){
+                    validData = false;
+                    //Toast.makeText(this, "Number of players required cannot be greater than 50", Toast.LENGTH_SHORT).show();
+                    playersRequiredEditText.setError("Number of players required cannot be greater than 50");
+                }
             }
-            else if ((previousActivity.contentEquals("edit event"))){
+            catch (NumberFormatException e){
+                validData = false;
+                Log.v("input players","invalid input");
+                playersRequiredEditText.setError("Please enter numeric values");
+            }
+            imageID = findImageID();
 
-                Map<String,Object> update = new HashMap<>();
+            Calendar newCal = Calendar.getInstance();
+            newCal.set(eventYear,eventMonth,eventDay,hour,min);
+            Date date = newCal.getTime();
 
-                update.put("events/"+eventID+"/eventName",eventName);
-                update.put("events/"+eventID+"/eventType",sport);
-                update.put("events/"+eventID+"/place",location);
-                update.put("events/"+eventID+"/dateTime",eventDateTime);
-                update.put("events/"+eventID+"/imageResourceId",imageID);
-                databaseReference.updateChildren(update);
+            if (!isValidEventName(eventName)){
+                validData = false;
+                eventNameEditText.setError("Event name cannot be blank and should be less than 40 characters");
+            }
+            if (!isValidLocation(location)){
+                validData = false;
+                Toast.makeText(this, "Please select a valid location", Toast.LENGTH_SHORT).show();
+            }
+            if (!isValidDateTime(date)){
+                validData = false;
+                Toast.makeText(this, "Please select a future date and time.", Toast.LENGTH_SHORT).show();
+            }
+
+
+            if (validData) {
+                String eventDateTime = localToUTC(date);
+
+                if ((previousActivity.contentEquals("event add"))) {
+                    Event event = new Event(eventName, eventPlace, eventDateTime, userID, sport, playersRequired, imageID);
+                    databaseReference.child("events").push().setValue(event);
+                } else if ((previousActivity.contentEquals("edit event"))) {
+
+                    Map<String, Object> update = new HashMap<>();
+
+                    update.put("events/" + eventID + "/eventName", eventName);
+                    update.put("events/" + eventID + "/eventType", sport);
+                    update.put("events/" + eventID + "/place", location);
+                    update.put("events/" + eventID + "/dateTime", eventDateTime);
+                    update.put("events/" + eventID + "/imageResourceId", imageID);
+                    databaseReference.updateChildren(update);
+                }
+                finish();
             }
         }
         else{
@@ -639,6 +671,39 @@ public class EventEditorActivity extends AppCompatActivity {
                 return R.drawable.baseball;
         }
         return -1;
+    }
+
+    private boolean isValidEventName(String name){
+        if (name != null && name.length() > 0 && name.length() <= 40){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isValidLocation(String location){
+        if (location != null && location.length() >0){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isValidPlayersRequired(int players){
+        if (players > 0 && players <= 50){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isValidDateTime(Date date){
+        //should be future date and time
+        Date currentDateTime = Calendar.getInstance().getTime();
+        Log.v("dateTime","ct " +currentDateTime);
+        Log.v("dateTime","selected " +date);
+        Log.v("value",""+ date.after(currentDateTime));
+        if (date.after(currentDateTime)){
+            return true;
+        }
+        return false;
     }
 
     @Override
