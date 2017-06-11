@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.arpit.sportit">
+
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+        android:required="true" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -15,11 +16,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAVnHBQTxNQ3gTPttTYAgrPWewvBDY6Org"/>
+            android:value="AIzaSyAVnHBQTxNQ3gTPttTYAgrPWewvBDY6Org" />
+
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,8 +39,10 @@
         <activity
             android:name=".Activities.Attending"
             android:label="@string/category_attending" />
-        <activity android:name=".Activities.EventEditorActivity"
-            android:label="@string/category_createEvent"/>
+        <activity
+            android:name=".Activities.EventEditorActivity"
+            android:label="@string/category_createEvent" />
+        <activity android:name=".Activities.about"></activity>
     </application>
 
 </manifest>
