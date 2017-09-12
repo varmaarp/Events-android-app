@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
+
         firebaseAuth = FirebaseAuth.getInstance();
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        */
 
 
+        /*
         // Find the view pager that will allow the user to swipe between fragments
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
 
@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         // Find the tab layout that shows the tabs
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        */
 
     }
 
@@ -127,13 +129,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //firebaseAuth.addAuthStateListener(authStateListener);
+        firebaseAuth.addAuthStateListener(authStateListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //firebaseAuth.removeAuthStateListener(authStateListener);
+        firebaseAuth.removeAuthStateListener(authStateListener);
     }
 
     private void onSignedIn(final String userId, final String userName, final String userEmail){

@@ -40,9 +40,9 @@ public class AttendingFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private EventAdaptor myEventsAdaptor;
-    private ChildEventListener childEventListener;
     private FirebaseAuth firebaseAuth;
     private ValueEventListener valueEventListener;
+    private String userID;
 
     public AttendingFragment() {
         // Required empty public constructor
@@ -61,6 +61,7 @@ public class AttendingFragment extends Fragment {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
+        userID = firebaseAuth.getCurrentUser().getUid();
 
         final ArrayList<Event> events = new ArrayList<Event>();
 
@@ -73,8 +74,8 @@ public class AttendingFragment extends Fragment {
         listView.setAdapter(myEventsAdaptor);
 
         //Log.v("user id", "user : " + firebaseAuth.getCurrentUser().getUid());
-        //databaseReference = firebaseDatabase.getReference().child("users").child(firebaseAuth.getCurrentUser().getUid()).child("eventsAttending");
-        databaseReference = firebaseDatabase.getReference().child("users").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").child("eventsAttending");
+        databaseReference = firebaseDatabase.getReference().child("users").child(userID).child("eventsAttending");
+        //databaseReference = firebaseDatabase.getReference().child("users").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").child("eventsAttending");
 
         final DatabaseReference eventsReference = firebaseDatabase.getReference().child("events");
 

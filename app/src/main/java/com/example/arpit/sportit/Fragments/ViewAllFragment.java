@@ -22,6 +22,7 @@ import com.example.arpit.sportit.Activities.EventEditorActivity;
 import com.example.arpit.sportit.Adapters.EventAdaptor;
 import com.example.arpit.sportit.DataClasses.Event;
 import com.example.arpit.sportit.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,18 +32,21 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.example.arpit.sportit.R.id.fab;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ViewAllFragment extends Fragment {
 
     private FirebaseDatabase firebaseDatabase;
+    private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReferenceEvents;
     private DatabaseReference databaseReferenceUsers;
-    private ChildEventListener childEventListener;
     private EventAdaptor myEventsAdaptor;
     private ValueEventListener valueEventListener;
     private ValueEventListener valueEventListener2;
+    private String userID;
 
 
     public ViewAllFragment() {
@@ -58,7 +62,11 @@ public class ViewAllFragment extends Fragment {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReferenceEvents  = firebaseDatabase.getReference().child("events");
-        databaseReferenceUsers = firebaseDatabase.getReference().child("users").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").child("eventsAttending");
+        firebaseAuth = FirebaseAuth.getInstance();
+        userID = firebaseAuth.getCurrentUser().getUid();
+
+        //databaseReferenceUsers = firebaseDatabase.getReference().child("users").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").child("eventsAttending");
+        databaseReferenceUsers = firebaseDatabase.getReference().child("users").child(userID).child("eventsAttending");
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
@@ -101,7 +109,8 @@ public class ViewAllFragment extends Fragment {
                 myEventsAdaptor.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Event e = postSnapshot.getValue(Event.class);
-                    if (!e.getCreatedBy().contentEquals("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2") &&
+                    //if (!e.getCreatedBy().contentEquals("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2") &&
+                    if (!e.getCreatedBy().contentEquals(userID) &&
                             !eventIds.contains(postSnapshot.getKey())
                             && !e.getIsCancelled()) {
                             e.setEventID(postSnapshot.getKey());

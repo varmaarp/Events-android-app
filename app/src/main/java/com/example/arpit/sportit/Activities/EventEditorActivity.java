@@ -90,6 +90,7 @@ public class EventEditorActivity extends AppCompatActivity {
     private String sport;
     private Spinner spinner;
     private int imageID;
+    String userID;
 
     /** Boolean flag that keeps track of whether the event has been edited (true) or not (false) */
     private boolean eventHasChanged = false;
@@ -153,8 +154,10 @@ public class EventEditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_editor);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        //firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = firebaseDatabase.getReference();
+
+        userID = firebaseAuth.getCurrentUser().getUid();
 
         cal = java.util.Calendar.getInstance();
         timeZoneID = cal.getTimeZone().getID();
@@ -474,7 +477,7 @@ public class EventEditorActivity extends AppCompatActivity {
 
     private void saveEventData(){
         //String userID = firebaseAuth.getCurrentUser().getUid();
-        String userID = "RMBIva5WdIZyE7zcTbcQ8SPAGlZ2";
+        //String userID = "RMBIva5WdIZyE7zcTbcQ8SPAGlZ2";
         if (!userID.isEmpty()) {
             boolean validData = true;
             String eventName = eventNameEditText.getText().toString().trim();
@@ -541,9 +544,11 @@ public class EventEditorActivity extends AppCompatActivity {
     private void joinEvent(int players){
 
         Map<String,Object> update = new HashMap<>();
-        update.put("events/"+eventID+"/usersAttending/"+"RMBIva5WdIZyE7zcTbcQ8SPAGlZ2",true);
+        //update.put("events/"+eventID+"/usersAttending/"+"RMBIva5WdIZyE7zcTbcQ8SPAGlZ2",true);
+        update.put("events/"+eventID+"/usersAttending/"+userID,true);
         update.put("events/"+eventID+"/playersAttending",players+1);
-        update.put("users/"+"RMBIva5WdIZyE7zcTbcQ8SPAGlZ2"+"/eventsAttending/"+eventID,true);
+        //update.put("users/"+"RMBIva5WdIZyE7zcTbcQ8SPAGlZ2"+"/eventsAttending/"+eventID,true);
+        update.put("users/"+userID+"/eventsAttending/"+eventID,true);
 
         databaseReference.updateChildren(update);
     }
@@ -552,8 +557,10 @@ public class EventEditorActivity extends AppCompatActivity {
         Map<String,Object> update = new HashMap<>();
         update.put("events/"+eventID+"/playersAttending",players-1);
         databaseReference.updateChildren(update);
-        databaseReference.child("events").child(eventID).child("usersAttending").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").removeValue();
-        databaseReference.child("users").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").child("eventsAttending").child(eventID).removeValue();
+        //databaseReference.child("events").child(eventID).child("usersAttending").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").removeValue();
+        databaseReference.child("events").child(eventID).child("usersAttending").child(userID).removeValue();
+        //databaseReference.child("users").child("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").child("eventsAttending").child(eventID).removeValue();
+        databaseReference.child("users").child(userID).child("eventsAttending").child(eventID).removeValue();
     }
 
     private void deleteEvent(){

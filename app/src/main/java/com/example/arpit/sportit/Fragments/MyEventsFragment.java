@@ -44,6 +44,7 @@ public class MyEventsFragment extends Fragment {
     private EventAdaptor myEventsAdaptor;
     private ValueEventListener valueEventListener;
     private ArrayList<Event> events;
+    private String userID;
 
     public MyEventsFragment() {
         // Required empty public constructor
@@ -58,6 +59,7 @@ public class MyEventsFragment extends Fragment {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
+        userID = firebaseAuth.getCurrentUser().getUid();
 
         events = new ArrayList<>();
         myEventsAdaptor = new EventAdaptor(getActivity(), events);
@@ -100,8 +102,8 @@ public class MyEventsFragment extends Fragment {
             }
         };
 
-        databaseReference.orderByChild("createdBy").equalTo("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").addValueEventListener(valueEventListener);
-        //databaseReference.orderByChild("createdBy").equalTo(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(valueEventListener);
+        //databaseReference.orderByChild("createdBy").equalTo("RMBIva5WdIZyE7zcTbcQ8SPAGlZ2").addValueEventListener(valueEventListener);
+        databaseReference.orderByChild("createdBy").equalTo(userID).addValueEventListener(valueEventListener);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
